@@ -1,0 +1,12 @@
+# Database credentials
+includes/db.php
+
+# Vendor directories
+vendor/
+
+# Log files
+*.log
+
+# OS-generated files
+.DS_Store
+Thumbs.db
