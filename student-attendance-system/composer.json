@@ -1,0 +1,18 @@
+{
+    "name": "jules/student-attendance-system",
+    "description": "A student attendance system with QR code scanning.",
+    "require": {
+        "endroid/qr-code": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jules",
+            "email": "jules@example.com"
+        }
+    ]
+}
