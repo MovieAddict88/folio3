@@ -10,7 +10,7 @@ CREATE TABLE `users` (
 CREATE TABLE `students` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `roll_number` varchar(50) NOT NULL,
+  `id_number` varchar(50) NOT NULL,
   `class` varchar(50) NOT NULL,
   `qr_code_id` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

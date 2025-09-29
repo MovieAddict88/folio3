@@ -12,7 +12,7 @@ use Endroid\QrCode\Writer\PngWriter;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
-    $roll_number = $_POST['roll_number'];
+    $id_number = $_POST['id_number'];
     $class = $_POST['class'];
     $qr_code_id = uniqid(); // Generate a unique ID for the QR code
 
@@ -33,9 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Save student to database
     $dbh = db_connect();
-    $stmt = $dbh->prepare("INSERT INTO students (name, roll_number, class, qr_code_id) VALUES (:name, :roll_number, :class, :qr_code_id)");
+    $stmt = $dbh->prepare("INSERT INTO students (name, id_number, class, qr_code_id) VALUES (:name, :id_number, :class, :qr_code_id)");
     $stmt->bindParam(':name', $name);
-    $stmt->bindParam(':roll_number', $roll_number);
+    $stmt->bindParam(':id_number', $id_number);
     $stmt->bindParam(':class', $class);
     $stmt->bindParam(':qr_code_id', $qr_code_id);
     $stmt->execute();
@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="name" id="name" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="roll_number">Roll Number</label>
-                <input type="text" name="roll_number" id="roll_number" class="form-control" required>
+                <label for="id_number">ID Number</label>
+                <input type="text" name="id_number" id="id_number" class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="class">Class</label>

@@ -17,7 +17,7 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Roll Number</th>
+                        <th>ID Number</th>
                         <th>Class</th>
                         <th>Actions</th>
                     </tr>
@@ -27,7 +27,7 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php foreach ($students as $student): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($student['name']); ?></td>
-                                <td><?php echo htmlspecialchars($student['roll_number']); ?></td>
+                                <td><?php echo htmlspecialchars($student['id_number']); ?></td>
                                 <td><?php echo htmlspecialchars($student['class']); ?></td>
                                 <td>
                                     <a href="index.php?page=view_qr&id=<?php echo $student['id']; ?>" class="btn btn-sm btn-info">View QR</a>

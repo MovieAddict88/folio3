@@ -10,12 +10,12 @@ $dbh = db_connect();
 // Handle form submission for updating student
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
-    $roll_number = $_POST['roll_number'];
+    $id_number = $_POST['id_number'];
     $class = $_POST['class'];
 
-    $stmt = $dbh->prepare("UPDATE students SET name = :name, roll_number = :roll_number, class = :class WHERE id = :id");
+    $stmt = $dbh->prepare("UPDATE students SET name = :name, id_number = :id_number, class = :class WHERE id = :id");
     $stmt->bindParam(':name', $name);
-    $stmt->bindParam(':roll_number', $roll_number);
+    $stmt->bindParam(':id_number', $id_number);
     $stmt->bindParam(':class', $class);
     $stmt->bindParam(':id', $student_id);
     $stmt->execute();
@@ -46,8 +46,8 @@ if (!$student) {
                 <input type="text" name="name" id="name" class="form-control" value="<?php echo htmlspecialchars($student['name']); ?>" required>
             </div>
             <div class="form-group">
-                <label for="roll_number">Roll Number</label>
-                <input type="text" name="roll_number" id="roll_number" class="form-control" value="<?php echo htmlspecialchars($student['roll_number']); ?>" required>
+                <label for="id_number">ID Number</label>
+                <input type="text" name="id_number" id="id_number" class="form-control" value="<?php echo htmlspecialchars($student['id_number']); ?>" required>
             </div>
             <div class="form-group">
                 <label for="class">Class</label>
