@@ -5,7 +5,7 @@ require_once '../src/Invoice.php';
 
 // User must be logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /login.php');
+    header('Location: login.php');
     exit;
 }
 
@@ -94,7 +94,7 @@ $items = $details['items'];
                 </tfoot>
             </table>
              <div class="text-center mt-4">
-                 <a href="/dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
+                 <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
                  <?php if ($invoiceData['status'] == 'pending'): ?>
                     <a href="#" class="btn btn-success">Pay Now (Not Implemented)</a>
                  <?php endif; ?>

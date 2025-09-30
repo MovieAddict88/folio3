@@ -14,11 +14,11 @@ session_start();
         <h1 class="text-center">Welcome to the Billing System</h1>
         <div class="d-flex justify-content-center gap-2 mt-4">
             <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="/dashboard.php" class="btn btn-primary">Go to Dashboard</a>
-                <a href="/logout.php" class="btn btn-secondary">Logout</a>
+                <a href="dashboard.php" class="btn btn-primary">Go to Dashboard</a>
+                <a href="logout.php" class="btn btn-secondary">Logout</a>
             <?php else: ?>
-                <a href="/login.php" class="btn btn-primary">Login</a>
-                <a href="/register.php" class="btn btn-success">Register</a>
+                <a href="login.php" class="btn btn-primary">Login</a>
+                <a href="register.php" class="btn btn-success">Register</a>
             <?php endif; ?>
         </div>
     </div>

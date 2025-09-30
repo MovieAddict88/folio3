@@ -3,7 +3,7 @@ session_start();
 
 // If user is already logged in, redirect to dashboard
 if (isset($_SESSION['user_id'])) {
-    header('Location: /dashboard.php');
+    header('Location: dashboard.php');
     exit;
 }
 ?>
@@ -30,7 +30,7 @@ if (isset($_SESSION['user_id'])) {
                          <?php if (isset($_GET['success'])): ?>
                             <div class="alert alert-success"><?php echo htmlspecialchars($_GET['success']); ?></div>
                         <?php endif; ?>
-                        <form action="/handle_login.php" method="POST">
+                        <form action="handle_login.php" method="POST">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
@@ -43,7 +43,7 @@ if (isset($_SESSION['user_id'])) {
                         </form>
                     </div>
                     <div class="card-footer text-center">
-                        <p>Don't have an account? <a href="/register.php">Register here</a></p>
+                        <p>Don't have an account? <a href="register.php">Register here</a></p>
                     </div>
                 </div>
             </div>

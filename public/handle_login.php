@@ -4,7 +4,7 @@ require_once '../config/db.php';
 require_once '../src/User.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /login.php');
+    header('Location: login.php');
     exit;
 }
 
@@ -12,7 +12,7 @@ $username = trim($_POST['username']);
 $password = $_POST['password'];
 
 if (empty($username) || empty($password)) {
-    header('Location: /login.php?error=Username and password are required.');
+    header('Location: login.php?error=Username and password are required.');
     exit;
 }
 
@@ -31,15 +31,15 @@ try {
         $_SESSION['username'] = $userData['username'];
         $_SESSION['role'] = $userData['role'];
 
-        header('Location: /dashboard.php');
+        header('Location: dashboard.php');
         exit;
     } else {
-        header('Location: /login.php?error=Invalid username or password.');
+        header('Location: login.php?error=Invalid username or password.');
         exit;
     }
 } catch (Exception $e) {
     // In a real app, log the error
-    header('Location: /login.php?error=An unexpected error occurred.');
+    header('Location: login.php?error=An unexpected error occurred.');
     exit;
 }
 ?>

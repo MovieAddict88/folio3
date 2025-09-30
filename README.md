@@ -75,23 +75,22 @@ Follow these steps to deploy the application to your InfinityFree account or any
 
 ### Step 4: Upload the Files
 
-1.  Use an FTP client (like FileZilla) or the InfinityFree File Manager to upload the project files.
-2.  Navigate to the `htdocs` directory in your file manager. This is the root directory for your website.
-3.  Upload the **contents** of the `public/`, `src/`, and `config/` folders into the `htdocs` directory.
-4.  **Important:** Do not upload the folders themselves, but their content. Your `htdocs` directory should look like this:
+1.  Using an FTP client (like FileZilla) or the InfinityFree File Manager, navigate to the `htdocs` directory in your hosting account.
+2.  Upload the **entire project folder** (the one containing this `README.md` file) into the `htdocs` directory. You can rename it to something simple, like `billing`.
+3.  Your file structure on the server should now look like this:
     ```
     htdocs/
-    |-- admin/
-    |-- config/
-    |-- src/
-    |-- index.php
-    |-- login.php
-    |-- etc...
+    |-- billing/
+    |   |-- public/
+    |   |-- src/
+    |   |-- config/
+    |   |-- database.sql
+    |   |-- ...
     ```
 
-### Step 5: Create an Admin Account
+### Step 5: Access the Site & Create an Admin Account
 
-1.  Visit your website (e.g., `http://yourdomain.infinityfreeapp.com`).
+1.  Visit your website by navigating to the `public` subdirectory, for example: `http://yourdomain.infinityfreeapp.com/billing/public/`
 2.  Click on **Register** and create a new account. This will be your admin account.
 3.  Go back to **phpMyAdmin** in your control panel.
 4.  Open the `users` table and find the account you just created.

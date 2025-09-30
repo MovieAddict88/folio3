@@ -3,7 +3,7 @@ session_start();
 
 // If user is not logged in, redirect to login page
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /login.php');
+    header('Location: login.php');
     exit;
 }
 ?>
@@ -27,7 +27,7 @@ if (!isset($_SESSION['user_id'])) {
                         </span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout.php">Logout</a>
+                        <a class="nav-link" href="logout.php">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -37,7 +37,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Your Dashboard</h2>
             <?php if ($_SESSION['role'] === 'admin'): ?>
-                <a href="/admin" class="btn btn-primary">Go to Admin Panel</a>
+                <a href="admin/" class="btn btn-primary">Go to Admin Panel</a>
             <?php endif; ?>
         </div>
 

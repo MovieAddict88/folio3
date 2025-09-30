@@ -1,50 +1,11 @@
--- Adminer 4.8.1 MySQL 5.7.44-48-log dump
-
 SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-DROP TABLE IF EXISTS `invoice_items`;
-CREATE TABLE `invoice_items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `invoice_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `price` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `invoice_id` (`invoice_id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `invoice_items_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `invoice_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `invoices`;
-CREATE TABLE `invoices` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `total_amount` decimal(10,2) NOT NULL,
-  `status` enum('pending','paid','cancelled') NOT NULL DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `due_date` date DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `products`;
-CREATE TABLE `products` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `description` text,
-  `price` decimal(10,2) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
+--
+-- Table structure for table `users`
+--
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -58,5 +19,48 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Table structure for table `products`
+--
+DROP TABLE IF EXISTS `products`;
+CREATE TABLE `products` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `description` text,
+  `price` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- 2024-07-29 12:00:00
+--
+-- Table structure for table `invoices`
+--
+DROP TABLE IF EXISTS `invoices`;
+CREATE TABLE `invoices` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `status` enum('pending','paid','cancelled') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `due_date` date DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `invoice_items`
+--
+DROP TABLE IF EXISTS `invoice_items`;
+CREATE TABLE `invoice_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invoice_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `invoice_id` (`invoice_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `invoice_items_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `invoice_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
