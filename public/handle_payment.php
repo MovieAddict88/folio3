@@ -33,6 +33,11 @@ if (!$invoiceData || $invoiceData['user_id'] != $_SESSION['user_id'] || !in_arra
     exit;
 }
 
+// If the invoice was rejected, reset its status to 'pending' before trying again.
+if ($invoiceData['status'] === 'rejected') {
+    $invoice->updateStatus($invoiceId, 'pending');
+}
+
 // --- Redirect to External Payment Gateway ---
 
 // In a real application, the base URL should be stored in a configuration file.
