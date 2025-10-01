@@ -64,3 +64,34 @@ CREATE TABLE `invoice_items` (
   CONSTRAINT `invoice_items_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE,
   CONSTRAINT `invoice_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `payments`
+--
+DROP TABLE IF EXISTS `payments`;
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invoice_id` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_method` varchar(50) NOT NULL,
+  `transaction_id` varchar(255) DEFAULT NULL,
+  `payment_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `invoice_id` (`invoice_id`),
+  CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `notifications`
+--
+DROP TABLE IF EXISTS `notifications`;
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

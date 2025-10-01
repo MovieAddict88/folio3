@@ -2,6 +2,7 @@
 session_start();
 require_once '../../config/db.php';
 require_once '../../src/Invoice.php';
+require_once '../../src/Payment.php';
 
 // Auth check
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
@@ -25,6 +26,12 @@ if (!$details) {
 
 $invoiceData = $details['invoice'];
 $items = $details['items'];
+$paymentData = null;
+
+if ($invoiceData['status'] === 'paid') {
+    $payment = new Payment($pdo);
+    $paymentData = $payment->findByInvoiceId($_GET['id']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -93,6 +100,21 @@ $items = $details['items'];
                     </tr>
                 </tfoot>
             </table>
+
+            <?php if ($paymentData): ?>
+            <hr>
+            <div class="row mt-4">
+                <div class="col">
+                    <h4>Payment Information</h4>
+                    <ul class="list-unstyled">
+                        <li><strong>Payment Method:</strong> <?php echo htmlspecialchars($paymentData['payment_method']); ?></li>
+                        <li><strong>Transaction ID:</strong> <?php echo htmlspecialchars($paymentData['transaction_id']); ?></li>
+                        <li><strong>Payment Date:</strong> <?php echo htmlspecialchars(date('F j, Y, g:i a', strtotime($paymentData['payment_date']))); ?></li>
+                    </ul>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <div class="text-center mt-4">
                  <a href="invoices.php" class="btn btn-secondary">Back to Invoices</a>
                  <button onclick="window.print()" class="btn btn-primary">Print Invoice</button>

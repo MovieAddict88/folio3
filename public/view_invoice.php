@@ -96,7 +96,7 @@ $items = $details['items'];
              <div class="text-center mt-4">
                  <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
                  <?php if ($invoiceData['status'] == 'pending'): ?>
-                    <a href="#" class="btn btn-success">Pay Now (Not Implemented)</a>
+                    <a href="payment.php?id=<?php echo htmlspecialchars($invoiceData['id']); ?>" class="btn btn-success">Pay Now</a>
                  <?php endif; ?>
             </div>
         </div>

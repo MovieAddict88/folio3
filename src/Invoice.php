@@ -105,5 +105,27 @@ class Invoice {
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
     }
+
+    /**
+     * Fetches a single invoice by its ID.
+     * @param int $id
+     * @return mixed
+     */
+    public function getById($id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM invoices WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    /**
+     * Updates the status of an invoice.
+     * @param int $id
+     * @param string $status
+     * @return bool
+     */
+    public function updateStatus($id, $status) {
+        $stmt = $this->pdo->prepare("UPDATE invoices SET status = ? WHERE id = ?");
+        return $stmt->execute([$status, $id]);
+    }
 }
 ?>
