@@ -53,8 +53,8 @@ $gatewayParams = [
     // 'hash' => hash_hmac('sha256', $invoiceId . $amount, 'YOUR_SECRET_KEY')
 ];
 
-// Build the final redirect URL for the simulated gateway
-$redirectUrl = 'external_gateway_simulator.php?' . http_build_query($gatewayParams);
+// Build the final redirect URL for the new payment processor
+$redirectUrl = 'process_payment.php?' . http_build_query($gatewayParams);
 
 // Redirect the user to the simulated external gateway
 header('Location: ' . $redirectUrl);

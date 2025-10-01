@@ -7,10 +7,10 @@ class Payment {
         $this->pdo = $pdo;
     }
 
-    public function create($invoiceId, $amount, $paymentMethod, $transactionId = null) {
-        $sql = "INSERT INTO payments (invoice_id, amount, payment_method, transaction_id) VALUES (?, ?, ?, ?)";
+    public function create($invoiceId, $amount, $paymentMethod, $transactionId = null, $referenceNumber = null) {
+        $sql = "INSERT INTO payments (invoice_id, amount, payment_method, transaction_id, reference_number) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$invoiceId, $amount, $paymentMethod, $transactionId]);
+        return $stmt->execute([$invoiceId, $amount, $paymentMethod, $transactionId, $referenceNumber]);
     }
 
     public function findByInvoiceId($invoiceId) {
