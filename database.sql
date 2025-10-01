@@ -40,7 +40,7 @@ CREATE TABLE `invoices` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
-  `status` enum('pending','paid','cancelled','pending_verification') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','paid','cancelled','pending_verification','rejected') NOT NULL DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `due_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),

@@ -106,7 +106,7 @@ $items = $details['items'];
             </table>
              <div class="text-center mt-4">
                  <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
-                 <?php if ($invoiceData['status'] == 'pending' || $invoiceData['status'] == 'rejected'): ?>
+                 <?php if (in_array($invoiceData['status'], ['pending', 'rejected', 'cancelled'])): ?>
                     <a href="payment.php?id=<?php echo htmlspecialchars($invoiceData['id']); ?>" class="btn btn-success">Pay Now</a>
                  <?php endif; ?>
             </div>

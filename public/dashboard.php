@@ -69,7 +69,16 @@ if (!isset($_SESSION['user_id'])) {
                     <tr>
                         <td>#<?php echo htmlspecialchars($inv['id']); ?></td>
                         <td>$<?php echo htmlspecialchars(number_format($inv['total_amount'], 2)); ?></td>
-                        <td><span class="badge bg-<?php echo $inv['status'] === 'paid' ? 'success' : ($inv['status'] === 'pending' ? 'warning' : 'danger'); ?>"><?php echo ucfirst(htmlspecialchars($inv['status'])); ?></span></td>
+                        <td><span class="badge bg-<?php
+                            $status = $inv['status'];
+                            if ($status === 'paid') {
+                                echo 'success';
+                            } elseif ($status === 'pending' || $status === 'pending_verification') {
+                                echo 'warning';
+                            } else {
+                                echo 'danger';
+                            }
+                        ?>"><?php echo ucfirst(htmlspecialchars($inv['status'])); ?></span></td>
                         <td><?php echo htmlspecialchars($inv['due_date']); ?></td>
                         <td>
                             <a href="view_invoice.php?id=<?php echo $inv['id']; ?>" class="btn btn-sm btn-info">View Details</a>
