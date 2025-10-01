@@ -28,7 +28,7 @@ $invoice = new Invoice($pdo);
 $invoiceData = $invoice->getById($invoiceId);
 
 // Authorization and validation
-if (!$invoiceData || $invoiceData['user_id'] != $_SESSION['user_id'] || $invoiceData['status'] !== 'pending') {
+if (!$invoiceData || $invoiceData['user_id'] != $_SESSION['user_id'] || !in_array($invoiceData['status'], ['pending', 'rejected'])) {
     header('Location: dashboard.php?error=Payment cannot be processed.');
     exit;
 }
