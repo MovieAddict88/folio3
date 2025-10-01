@@ -51,7 +51,7 @@ class Invoice {
      * @return array
      */
     public function getAllWithUsers() {
-        $sql = "SELECT i.id, i.total_amount, i.status, i.created_at, i.due_date, u.username
+        $sql = "SELECT i.id, i.total_amount, i.amount_paid, i.balance, i.status, i.created_at, i.due_date, u.username
                 FROM invoices i
                 JOIN users u ON i.user_id = u.id
                 ORDER BY i.created_at DESC";

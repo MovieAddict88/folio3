@@ -39,6 +39,8 @@ $invoices = $invoice->getAllWithUsers();
                     <th>ID</th>
                     <th>User</th>
                     <th>Total Amount</th>
+                    <th>Paid Amount</th>
+                    <th>Balance</th>
                     <th>Status</th>
                     <th>Created On</th>
                     <th>Due Date</th>
@@ -68,11 +70,20 @@ $invoices = $invoice->getAllWithUsers();
                     <td>#<?php echo htmlspecialchars($inv['id']); ?></td>
                     <td><?php echo htmlspecialchars($inv['username']); ?></td>
                     <td>$<?php echo htmlspecialchars(number_format($inv['total_amount'], 2)); ?></td>
+                    <td>$<?php echo htmlspecialchars(number_format($inv['amount_paid'], 2)); ?></td>
+                    <td>$<?php echo htmlspecialchars(number_format($inv['balance'], 2)); ?></td>
                     <td><span class="badge bg-<?php echo $status_class; ?>"><?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($inv['status']))); ?></span></td>
                     <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($inv['created_at']))); ?></td>
                     <td><?php echo htmlspecialchars($inv['due_date']); ?></td>
                     <td>
                         <a href="view_invoice.php?id=<?php echo $inv['id']; ?>" class="btn btn-sm btn-info">View</a>
+                        <?php if ($inv['status'] === 'pending_verification'): ?>
+                            <form action="handle_verification.php" method="POST" class="d-inline">
+                                <input type="hidden" name="invoice_id" value="<?php echo $inv['id']; ?>">
+                                <button type="submit" name="action" value="approve" class="btn btn-sm btn-success">Approve</button>
+                                <button type="submit" name="action" value="reject" class="btn btn-sm btn-danger">Reject</button>
+                            </form>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

@@ -64,8 +64,8 @@ try {
         $successMessage = "Payment of $" . number_format($latestPayment['amount'], 2) . " for Invoice #{$invoiceId} has been approved.";
 
     } elseif ($action === 'reject') {
-        // 1. Revert invoice status to 'pending'
-        $invoice->updateStatus($invoiceId, 'pending');
+        // 1. Update invoice status to 'rejected'
+        $invoice->updateStatus($invoiceId, 'rejected');
 
         // 2. Delete the specific payment record that was rejected
         $payment->deleteById($latestPayment['id']);
