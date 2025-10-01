@@ -72,7 +72,7 @@ if ($invoiceData['status'] !== 'pending') {
                                 </label>
                             </div>
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary">Submit Payment</button>
+                                <button type="submit" class="btn btn-primary">Proceed to Payment Gateway</button>
                             </div>
                         </form>
                     </div>

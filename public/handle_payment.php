@@ -2,8 +2,6 @@
 session_start();
 require_once '../config/db.php';
 require_once '../src/Invoice.php';
-require_once '../src/Payment.php';
-require_once '../src/Notification.php';
 
 // User must be logged in
 if (!isset($_SESSION['user_id'])) {
@@ -35,36 +33,30 @@ if (!$invoiceData || $invoiceData['user_id'] != $_SESSION['user_id'] || $invoice
     exit;
 }
 
-// Simulate payment processing
-$transactionId = 'TXN_' . strtoupper(uniqid());
+// --- Redirect to External Payment Gateway ---
 
-$payment = new Payment($pdo);
-$notification = new Notification($pdo);
+// In a real application, the base URL should be stored in a configuration file.
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'];
+// Get the base path of the application by finding the directory of the current script.
+$basePath = dirname($_SERVER['SCRIPT_NAME']);
+// Construct a clean callback URL pointing to confirm_payment.php
+$callbackUrl = $protocol . $host . $basePath . '/confirm_payment.php';
 
-try {
-    $pdo->beginTransaction();
+// Prepare query parameters for the gateway URL
+$gatewayParams = [
+    'invoice_id' => $invoiceId,
+    'amount' => $amount,
+    'payment_method' => $paymentMethod,
+    'callback_url' => $callbackUrl,
+    // In a real scenario, you'd also include a signature/hash to verify the request's integrity
+    // 'hash' => hash_hmac('sha256', $invoiceId . $amount, 'YOUR_SECRET_KEY')
+];
 
-    // 1. Record the payment
-    $payment->create($invoiceId, $amount, $paymentMethod, $transactionId);
+// Build the final redirect URL for the simulated gateway
+$redirectUrl = 'external_gateway_simulator.php?' . http_build_query($gatewayParams);
 
-    // 2. Update invoice status
-    $invoice->updateStatus($invoiceId, 'paid');
-
-    // 3. Create a notification for all admins
-    // In a more complex app, you'd fetch all admin users
-    $adminUserId = 1; // Assuming admin user has ID 1
-    $message = "Payment of $$amount for Invoice #$invoiceId received via $paymentMethod.";
-    $notification->create($adminUserId, $message);
-
-    $pdo->commit();
-
-    // Redirect to a receipt page
-    header('Location: receipt.php?invoice_id=' . $invoiceId);
-    exit;
-
-} catch (Exception $e) {
-    $pdo->rollBack();
-    // In a real app, log the error
-    header('Location: payment.php?id=' . $invoiceId . '&error=An error occurred. Please try again.');
-    exit;
-}
+// Redirect the user to the simulated external gateway
+header('Location: ' . $redirectUrl);
+exit;
+?>
