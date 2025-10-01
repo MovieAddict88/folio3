@@ -59,5 +59,16 @@ class User {
         $stmt = $this->pdo->query('SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC');
         return $stmt->fetchAll();
     }
+
+    /**
+     * Fetches a single user by their ID.
+     * @param int $id
+     * @return mixed User data if found, false otherwise.
+     */
+    public function getById($id) {
+        $stmt = $this->pdo->prepare('SELECT id, username, email, role, created_at FROM users WHERE id = ?');
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
 }
 ?>
