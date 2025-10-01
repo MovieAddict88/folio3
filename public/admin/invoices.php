@@ -53,6 +53,7 @@ $invoices = $invoice->getAllWithUsers();
                     $status_class = 'secondary';
                     switch ($inv['status']) {
                         case 'paid':
+                        case 'approved':
                             $status_class = 'success';
                             break;
                         case 'pending':
@@ -62,6 +63,7 @@ $invoices = $invoice->getAllWithUsers();
                             $status_class = 'info';
                             break;
                         case 'cancelled':
+                        case 'rejected':
                             $status_class = 'danger';
                             break;
                     }

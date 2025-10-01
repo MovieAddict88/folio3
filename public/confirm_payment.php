@@ -83,22 +83,23 @@ try {
         // --- Handle manually submitted payments (Bank Transfer) ---
         $finalTransactionId = 'MANUAL-' . ($referenceNumber ?: 'NA');
 
-        // 1. Record the payment attempt
-        // Note: The `create` method in Payment.php will need to be updated to handle a new column for the reference number.
+        // 1. Record the payment transaction
         $payment->create($invoiceId, $amount, $paymentMethod, $finalTransactionId, $referenceNumber);
 
-        // 2. Update the invoice status to 'pending_verification'
+        // 2. Update the invoice's balance to reflect the pending payment
+        $invoice->recordPendingPayment($invoiceId, $amount);
+
+        // 3. Update the invoice status to 'pending_verification' so an admin can approve/reject it
         $invoice->updateStatus($invoiceId, 'pending_verification');
 
-
-        // 3. Create a notification for the admin to verify the payment
+        // 4. Create a notification for the admin
         $message = "A payment of $" . number_format($amount, 2) . " for Invoice #$invoiceId was submitted via $paymentMethod and requires verification. Reference: $referenceNumber.";
         $notification->create($adminUserId, $message);
 
         $pdo->commit();
 
         // Redirect to dashboard with a success message
-        header('Location: dashboard.php?success=Your payment has been submitted for verification.');
+        header('Location: dashboard.php?success=Your payment has been submitted and is pending verification.');
         exit;
     } else {
         // Fallback for any other status

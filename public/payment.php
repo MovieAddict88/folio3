@@ -8,22 +8,26 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Use 'id' from GET parameter, consistent with dashboard link
 if (!isset($_GET['id'])) {
     header('Location: dashboard.php?error=No invoice selected.');
     exit;
 }
 
+$invoiceId = $_GET['id'];
 $pdo = getDBConnection();
 $invoice = new Invoice($pdo);
-$invoiceData = $invoice->getById($_GET['id']);
+$invoiceData = $invoice->getById($invoiceId);
 
+// Authorization check: ensure the invoice belongs to the logged-in user
 if (!$invoiceData || $invoiceData['user_id'] != $_SESSION['user_id']) {
     header('Location: dashboard.php?error=Access denied or invoice not found.');
     exit;
 }
 
-if ($invoiceData['status'] !== 'pending') {
-    header('Location: view_invoice.php?id=' . $_GET['id'] . '&error=Invoice is not pending.');
+// CRITICAL FIX: Allow payment if status is 'pending' OR 'rejected'
+if (!in_array($invoiceData['status'], ['pending', 'rejected'])) {
+    header('Location: dashboard.php?error=Payment cannot be processed for this invoice at its current status.');
     exit;
 }
 ?>
@@ -99,7 +103,7 @@ if ($invoiceData['status'] !== 'pending') {
                     </div>
                 </div>
                 <div class="text-center mt-3">
-                    <a href="view_invoice.php?id=<?php echo htmlspecialchars($invoiceData['id']); ?>">Cancel</a>
+                    <a href="dashboard.php">Cancel</a>
                 </div>
             </div>
         </div>

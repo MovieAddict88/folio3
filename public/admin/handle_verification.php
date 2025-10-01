@@ -25,7 +25,6 @@ $pdo = getDBConnection();
 $invoice = new Invoice($pdo);
 $payment = new Payment($pdo);
 $notification = new Notification($pdo);
-$user = new User($pdo);
 
 $invoiceData = $invoice->getById($invoiceId);
 
@@ -35,44 +34,43 @@ if (!$invoiceData || $invoiceData['status'] !== 'pending_verification') {
     exit;
 }
 
-$customer = $user->getById($invoiceData['user_id']);
-if (!$customer) {
-    header('Location: invoices.php?error=Could not find the customer associated with this invoice.');
-    exit;
-}
-
-$payments = $payment->findByInvoiceId($invoiceId);
-$latestPayment = $payments[0] ?? null;
-
-// There must be a payment record to verify
-if (!$latestPayment) {
-    header('Location: view_invoice.php?id=' . $invoiceId . '&error=No payment record found to verify.');
-    exit;
-}
+$userId = $invoiceData['user_id'];
 
 try {
     $pdo->beginTransaction();
 
     if ($action === 'approve') {
-        // 1. Update invoice payment details. This will adjust balance and status ('paid' or 'pending').
-        $invoice->updatePaymentDetails($invoiceId, $latestPayment['amount']);
+        // Just update the status. The payment details were already recorded.
+        $invoice->updateStatus($invoiceId, 'approved');
 
-        // 2. Create notification for the user
-        $message = "Your payment of $" . number_format($latestPayment['amount'], 2) . " for Invoice #{$invoiceId} has been approved. Thank you!";
-        $notification->create($customer['id'], $message);
+        // Create notification for the user
+        $message = "Your payment for Invoice #{$invoiceId} has been approved. Thank you!";
+        $notification->create($userId, $message);
 
-        $successMessage = "Payment of $" . number_format($latestPayment['amount'], 2) . " for Invoice #{$invoiceId} has been approved.";
+        $successMessage = "Payment for Invoice #{$invoiceId} has been approved.";
 
     } elseif ($action === 'reject') {
-        // 1. Update invoice status to 'rejected'
+        // Find the latest payment to know how much to revert
+        $latestPayment = $payment->getLatestPaymentForInvoice($invoiceId);
+
+        if (!$latestPayment) {
+            throw new Exception("No payment record found to reject for invoice #{$invoiceId}.");
+        }
+
+        $amountToRevert = $latestPayment['amount'];
+
+        // 1. Revert the invoice's balance and amount_paid
+        $invoice->revertPayment($invoiceId, $amountToRevert);
+
+        // 2. Update the invoice status to 'rejected'
         $invoice->updateStatus($invoiceId, 'rejected');
 
-        // 2. Delete the specific payment record that was rejected
+        // 3. Delete the specific payment record that was rejected
         $payment->deleteById($latestPayment['id']);
 
-        // 3. Create a notification for the user
-        $message = "Your submitted payment of $" . number_format($latestPayment['amount'], 2) . " for Invoice #{$invoiceId} was rejected. Please try again or contact support.";
-        $notification->create($customer['id'], $message);
+        // 4. Create a notification for the user
+        $message = "Your submitted payment of $" . number_format($amountToRevert, 2) . " for Invoice #{$invoiceId} was rejected. Please check your payment details and try again, or contact support.";
+        $notification->create($userId, $message);
 
         $successMessage = "The payment for Invoice #{$invoiceId} has been rejected. The user has been notified.";
 
@@ -90,3 +88,4 @@ try {
     header('Location: view_invoice.php?id=' . $invoiceId . '&error=An error occurred while processing the action.');
     exit;
 }
+?>

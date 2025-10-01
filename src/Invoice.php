@@ -150,5 +150,57 @@ class Invoice {
         );
         return $stmt->execute([$newAmountPaid, $newBalance, $status, $id]);
     }
+
+    /**
+     * Reverts a payment on an invoice by adjusting the balance and amount paid.
+     * This is used when a payment is rejected.
+     * @param int $id The invoice ID.
+     * @param float $amountToRevert The payment amount to revert.
+     * @return bool
+     */
+    public function revertPayment($id, $amountToRevert) {
+        $invoice = $this->getById($id);
+        if (!$invoice) {
+            return false;
+        }
+
+        $newAmountPaid = $invoice['amount_paid'] - $amountToRevert;
+        $newBalance = $invoice['balance'] + $amountToRevert;
+
+        // Clamp values to prevent invalid states
+        $newAmountPaid = max(0, $newAmountPaid);
+        $newBalance = min($invoice['total_amount'], $newBalance);
+
+        $stmt = $this->pdo->prepare(
+            "UPDATE invoices SET amount_paid = ?, balance = ? WHERE id = ?"
+        );
+        return $stmt->execute([$newAmountPaid, $newBalance, $id]);
+    }
+
+    /**
+     * Records a payment against an invoice without changing its status.
+     * This is used for payments that are pending verification.
+     * @param int $id The invoice ID.
+     * @param float $amountPaid The amount that was paid.
+     * @return bool
+     */
+    public function recordPendingPayment($id, $amountPaid) {
+        $invoice = $this->getById($id);
+        if (!$invoice) {
+            return false;
+        }
+
+        $newAmountPaid = $invoice['amount_paid'] + $amountPaid;
+        $newBalance = $invoice['total_amount'] - $newAmountPaid;
+
+        // Clamp values to prevent invalid states
+        $newAmountPaid = min($invoice['total_amount'], $newAmountPaid);
+        $newBalance = max(0, $newBalance);
+
+        $stmt = $this->pdo->prepare(
+            "UPDATE invoices SET amount_paid = ?, balance = ? WHERE id = ?"
+        );
+        return $stmt->execute([$newAmountPaid, $newBalance, $id]);
+    }
 }
 ?>

@@ -73,20 +73,31 @@ if (!isset($_SESSION['user_id'])) {
                         <td>$<?php echo htmlspecialchars(number_format($inv['balance'], 2)); ?></td>
                         <td><span class="badge bg-<?php
                             $status = $inv['status'];
-                            if ($status === 'paid') {
+                            if ($status === 'paid' || $status === 'approved') {
                                 echo 'success';
                             } elseif ($status === 'pending' || $status === 'pending_verification') {
                                 echo 'warning';
                             } else {
-                                echo 'danger';
+                                echo 'danger'; // covers 'rejected', 'cancelled' etc.
                             }
-                        ?>"><?php echo ucfirst(htmlspecialchars($inv['status'])); ?></span></td>
+                        ?>"><?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($inv['status']))); ?></span></td>
                         <td><?php echo htmlspecialchars($inv['due_date']); ?></td>
                         <td>
-                            <a href="view_invoice.php?id=<?php echo $inv['id']; ?>" class="btn btn-sm btn-info">View Details</a>
-                            <?php if ($inv['balance'] > 0): ?>
-                                <a href="payment.php?invoice_id=<?php echo $inv['id']; ?>" class="btn btn-sm btn-success">Pay Balance</a>
-                            <?php endif; ?>
+                            <?php
+                                // Determine button properties based on invoice status and balance
+                                $isPayable = $inv['balance'] > 0 && ($inv['status'] === 'pending' || $inv['status'] === 'rejected');
+
+                                if ($isPayable) {
+                                    $buttonText = 'Pay Balance';
+                                    $buttonLink = 'payment.php?id=' . $inv['id']; // FIX: Changed 'invoice_id' to 'id'
+                                    $buttonClass = 'btn-success';
+                                } else {
+                                    $buttonText = 'View Details';
+                                    $buttonLink = 'view_invoice.php?id=' . $inv['id'];
+                                    $buttonClass = 'btn-info';
+                                }
+                            ?>
+                            <a href="<?php echo $buttonLink; ?>" class="btn btn-sm <?php echo $buttonClass; ?>"><?php echo $buttonText; ?></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

@@ -31,4 +31,17 @@ class Payment {
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$id]);
     }
+
+    /**
+     * Fetches the latest payment for a specific invoice.
+     * @param int $invoiceId
+     * @return mixed The latest payment record or false if not found.
+     */
+    public function getLatestPaymentForInvoice($invoiceId) {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM payments WHERE invoice_id = ? ORDER BY payment_date DESC LIMIT 1"
+        );
+        $stmt->execute([$invoiceId]);
+        return $stmt->fetch();
+    }
 }
