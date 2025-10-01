@@ -55,8 +55,8 @@ try {
         $successMessage = "Invoice #{$invoiceId} has been approved and marked as paid.";
 
     } elseif ($action === 'reject') {
-        // 1. Revert invoice status to 'pending'
-        $invoice->updateStatus($invoiceId, 'pending');
+        // 1. Revert invoice status to 'rejected'
+        $invoice->updateStatus($invoiceId, 'rejected');
 
         // 2. Delete the payment record associated with this invoice
         $payment->deleteByInvoiceId($invoiceId);

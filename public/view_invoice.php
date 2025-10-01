@@ -59,7 +59,18 @@ $items = $details['items'];
                     <?php echo htmlspecialchars($invoiceData['email']); ?>
                 </div>
                 <div class="col-sm-6 text-sm-end">
-                    <strong>Status:</strong> <span class="badge bg-<?php echo $invoiceData['status'] === 'paid' ? 'success' : ($invoiceData['status'] === 'pending' ? 'warning' : 'danger'); ?>"><?php echo ucfirst(htmlspecialchars($invoiceData['status'])); ?></span><br>
+                    <strong>Status:</strong> <span class="badge bg-<?php
+                        $status = $invoiceData['status'];
+                        if ($status === 'paid') {
+                            echo 'success';
+                        } elseif ($status === 'pending' || $status === 'pending_verification') {
+                            echo 'warning';
+                        } elseif ($status === 'rejected' || $status === 'cancelled') {
+                            echo 'danger';
+                        } else {
+                            echo 'secondary';
+                        }
+                    ?>"><?php echo ucfirst(htmlspecialchars($status)); ?></span><br>
                     <strong>Date Created:</strong> <?php echo htmlspecialchars(date('F j, Y', strtotime($invoiceData['created_at']))); ?><br>
                     <strong>Date Due:</strong> <?php echo htmlspecialchars(date('F j, Y', strtotime($invoiceData['due_date']))); ?>
                 </div>
@@ -95,7 +106,7 @@ $items = $details['items'];
             </table>
              <div class="text-center mt-4">
                  <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
-                 <?php if ($invoiceData['status'] == 'pending'): ?>
+                 <?php if ($invoiceData['status'] == 'pending' || $invoiceData['status'] == 'rejected'): ?>
                     <a href="payment.php?id=<?php echo htmlspecialchars($invoiceData['id']); ?>" class="btn btn-success">Pay Now</a>
                  <?php endif; ?>
             </div>
