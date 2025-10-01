@@ -116,24 +116,42 @@ switch ($invoiceData['status']) {
                         <th colspan="3" class="text-end">Grand Total:</th>
                         <th>$<?php echo htmlspecialchars(number_format($invoiceData['total_amount'], 2)); ?></th>
                     </tr>
+                     <tr>
+                        <th colspan="3" class="text-end">Amount Paid:</th>
+                        <th class="text-success">$<?php echo htmlspecialchars(number_format($invoiceData['amount_paid'], 2)); ?></th>
+                    </tr>
+                    <tr>
+                        <th colspan="3" class="text-end text-danger">Balance Due:</th>
+                        <th class="text-danger">$<?php echo htmlspecialchars(number_format($invoiceData['balance'], 2)); ?></th>
+                    </tr>
                 </tfoot>
             </table>
 
-            <?php if ($paymentData): ?>
+            <?php if (!empty($paymentData)): ?>
             <hr>
-            <div class="row mt-4">
-                <div class="col">
-                    <h4>Payment Information</h4>
-                    <ul class="list-unstyled">
-                        <li><strong>Payment Method:</strong> <?php echo htmlspecialchars($paymentData['payment_method']); ?></li>
-                        <li><strong>Transaction ID:</strong> <?php echo htmlspecialchars($paymentData['transaction_id']); ?></li>
-                        <?php if (!empty($paymentData['reference_number'])): ?>
-                            <li><strong>Reference Number:</strong> <strong class="text-primary"><?php echo htmlspecialchars($paymentData['reference_number']); ?></strong></li>
-                        <?php endif; ?>
-                        <li><strong>Payment Date:</strong> <?php echo htmlspecialchars(date('F j, Y, g:i a', strtotime($paymentData['payment_date']))); ?></li>
-                    </ul>
-                </div>
-            </div>
+            <h4>Payment History</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Transaction ID</th>
+                        <th>Reference #</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($paymentData as $payment): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($payment['payment_date']))); ?></td>
+                        <td>$<?php echo htmlspecialchars(number_format($payment['amount'], 2)); ?></td>
+                        <td><?php echo htmlspecialchars($payment['payment_method']); ?></td>
+                        <td><?php echo htmlspecialchars($payment['transaction_id']); ?></td>
+                        <td><?php echo htmlspecialchars($payment['reference_number'] ?: 'N/A'); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
             <?php endif; ?>
 
             <?php if ($invoiceData['status'] === 'pending_verification'): ?>

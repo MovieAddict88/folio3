@@ -102,11 +102,19 @@ $items = $details['items'];
                         <th colspan="3" class="text-end">Grand Total:</th>
                         <th>$<?php echo htmlspecialchars(number_format($invoiceData['total_amount'], 2)); ?></th>
                     </tr>
+                    <tr>
+                        <th colspan="3" class="text-end">Amount Paid:</th>
+                        <th>$<?php echo htmlspecialchars(number_format($invoiceData['amount_paid'], 2)); ?></th>
+                    </tr>
+                    <tr>
+                        <th colspan="3" class="text-end text-danger">Balance Due:</th>
+                        <th class="text-danger">$<?php echo htmlspecialchars(number_format($invoiceData['balance'], 2)); ?></th>
+                    </tr>
                 </tfoot>
             </table>
              <div class="text-center mt-4">
                  <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
-                 <?php if (in_array($invoiceData['status'], ['pending', 'rejected', 'cancelled'])): ?>
+                 <?php if ($invoiceData['balance'] > 0 && in_array($invoiceData['status'], ['pending', 'rejected', 'cancelled'])): ?>
                     <a href="payment.php?id=<?php echo htmlspecialchars($invoiceData['id']); ?>" class="btn btn-success">Pay Now</a>
                  <?php endif; ?>
             </div>

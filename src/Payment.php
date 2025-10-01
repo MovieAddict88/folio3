@@ -14,15 +14,21 @@ class Payment {
     }
 
     public function findByInvoiceId($invoiceId) {
-        $sql = "SELECT * FROM payments WHERE invoice_id = ? ORDER BY payment_date DESC LIMIT 1";
+        $sql = "SELECT * FROM payments WHERE invoice_id = ? ORDER BY payment_date DESC";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$invoiceId]);
-        return $stmt->fetch();
+        return $stmt->fetchAll();
     }
 
     public function deleteByInvoiceId($invoiceId) {
         $sql = "DELETE FROM payments WHERE invoice_id = ?";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$invoiceId]);
+    }
+
+    public function deleteById($id) {
+        $sql = "DELETE FROM payments WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$id]);
     }
 }

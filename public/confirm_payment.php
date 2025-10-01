@@ -66,8 +66,8 @@ try {
         // 1. Record the payment
         $payment->create($invoiceId, $amount, $paymentMethod, $transactionId);
 
-        // 2. Update the invoice status to 'paid'
-        $invoice->updateStatus($invoiceId, 'paid');
+        // 2. Update the invoice payment details
+        $invoice->updatePaymentDetails($invoiceId, $amount);
 
         // 3. Create a notification for the admin
         $message = "Payment of $" . number_format($amount, 2) . " for Invoice #$invoiceId was confirmed via $paymentMethod (Transaction ID: $transactionId).";
@@ -89,6 +89,7 @@ try {
 
         // 2. Update the invoice status to 'pending_verification'
         $invoice->updateStatus($invoiceId, 'pending_verification');
+
 
         // 3. Create a notification for the admin to verify the payment
         $message = "A payment of $" . number_format($amount, 2) . " for Invoice #$invoiceId was submitted via $paymentMethod and requires verification. Reference: $referenceNumber.";

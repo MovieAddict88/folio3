@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 // Retrieve payment details from the query string
 $invoiceId = $_GET['invoice_id'] ?? null;
 $amount = $_GET['amount'] ?? null;
-$paymentMethod = $_GET['payment_method'] ?? null;
+$paymentMethod = strtolower($_GET['payment_method'] ?? '');
 $callbackUrl = $_GET['callback_url'] ?? null;
 
 // Basic validation

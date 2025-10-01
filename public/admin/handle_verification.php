@@ -41,31 +41,40 @@ if (!$customer) {
     exit;
 }
 
+$payments = $payment->findByInvoiceId($invoiceId);
+$latestPayment = $payments[0] ?? null;
+
+// There must be a payment record to verify
+if (!$latestPayment) {
+    header('Location: view_invoice.php?id=' . $invoiceId . '&error=No payment record found to verify.');
+    exit;
+}
+
 try {
     $pdo->beginTransaction();
 
     if ($action === 'approve') {
-        // 1. Update invoice status to 'paid'
-        $invoice->updateStatus($invoiceId, 'paid');
+        // 1. Update invoice payment details. This will adjust balance and status ('paid' or 'pending').
+        $invoice->updatePaymentDetails($invoiceId, $latestPayment['amount']);
 
         // 2. Create notification for the user
-        $message = "Your payment for Invoice #{$invoiceId} has been approved. Thank you!";
+        $message = "Your payment of $" . number_format($latestPayment['amount'], 2) . " for Invoice #{$invoiceId} has been approved. Thank you!";
         $notification->create($customer['id'], $message);
 
-        $successMessage = "Invoice #{$invoiceId} has been approved and marked as paid.";
+        $successMessage = "Payment of $" . number_format($latestPayment['amount'], 2) . " for Invoice #{$invoiceId} has been approved.";
 
     } elseif ($action === 'reject') {
-        // 1. Revert invoice status to 'rejected'
-        $invoice->updateStatus($invoiceId, 'rejected');
+        // 1. Revert invoice status to 'pending'
+        $invoice->updateStatus($invoiceId, 'pending');
 
-        // 2. Delete the payment record associated with this invoice
-        $payment->deleteByInvoiceId($invoiceId);
+        // 2. Delete the specific payment record that was rejected
+        $payment->deleteById($latestPayment['id']);
 
         // 3. Create a notification for the user
-        $message = "Your payment for Invoice #{$invoiceId} was rejected. Please try submitting your payment again or contact support for assistance.";
+        $message = "Your submitted payment of $" . number_format($latestPayment['amount'], 2) . " for Invoice #{$invoiceId} was rejected. Please try again or contact support.";
         $notification->create($customer['id'], $message);
 
-        $successMessage = "Invoice #{$invoiceId} has been rejected. The user has been notified.";
+        $successMessage = "The payment for Invoice #{$invoiceId} has been rejected. The user has been notified.";
 
     } else {
         throw new Exception("Invalid action specified.");

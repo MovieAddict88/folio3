@@ -44,11 +44,32 @@ if ($invoiceData['status'] !== 'pending') {
                         <h3 class="text-center">Payment for Invoice #<?php echo htmlspecialchars($invoiceData['id']); ?></h3>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">Total Amount: $<?php echo htmlspecialchars(number_format($invoiceData['total_amount'], 2)); ?></h5>
-                        <p class="card-text">Please select a payment method:</p>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title mb-0">Total Amount:</h5>
+                            <h5 class="card-title mb-0">$<?php echo htmlspecialchars(number_format($invoiceData['total_amount'], 2)); ?></h5>
+                        </div>
+                        <div class="d-flex justify-content-between text-danger">
+                            <p class="mb-0">Balance Due:</p>
+                            <p class="mb-0">$<?php echo htmlspecialchars(number_format($invoiceData['balance'], 2)); ?></p>
+                        </div>
+                        <hr>
                         <form action="handle_payment.php" method="POST">
                             <input type="hidden" name="invoice_id" value="<?php echo htmlspecialchars($invoiceData['id']); ?>">
-                            <input type="hidden" name="amount" value="<?php echo htmlspecialchars($invoiceData['total_amount']); ?>">
+
+                            <div class="mb-3">
+                                <label for="amount" class="form-label"><strong>Payment Amount</strong></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="amount" name="amount"
+                                           min="0.01" max="<?php echo htmlspecialchars($invoiceData['balance']); ?>"
+                                           step="0.01" value="<?php echo htmlspecialchars($invoiceData['balance']); ?>" required>
+                                </div>
+                                <div class="form-text">
+                                    You can pay the full balance or a partial amount.
+                                </div>
+                            </div>
+
+                            <p class="card-text">Please select a payment method:</p>
                             <div class="list-group">
                                 <label class="list-group-item">
                                     <input class="form-check-input me-1" type="radio" name="payment_method" value="GCASH" required>

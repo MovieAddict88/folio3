@@ -24,9 +24,9 @@ class Invoice {
 
             // Insert into invoices table
             $stmt = $this->pdo->prepare(
-                'INSERT INTO invoices (user_id, total_amount, due_date, status) VALUES (?, ?, ?, ?)'
+                'INSERT INTO invoices (user_id, total_amount, balance, due_date, status) VALUES (?, ?, ?, ?, ?)'
             );
-            $stmt->execute([$userId, $totalAmount, $dueDate, 'pending']);
+            $stmt->execute([$userId, $totalAmount, $totalAmount, $dueDate, 'pending']);
             $invoiceId = $this->pdo->lastInsertId();
 
             // Insert into invoice_items table
@@ -126,6 +126,29 @@ class Invoice {
     public function updateStatus($id, $status) {
         $stmt = $this->pdo->prepare("UPDATE invoices SET status = ? WHERE id = ?");
         return $stmt->execute([$status, $id]);
+    }
+
+    /**
+     * Updates the payment details of an invoice.
+     * @param int $id
+     * @param float $amountPaid
+     * @return bool
+     */
+    public function updatePaymentDetails($id, $amountPaid) {
+        $invoice = $this->getById($id);
+        if (!$invoice) {
+            return false;
+        }
+
+        $newAmountPaid = $invoice['amount_paid'] + $amountPaid;
+        $newBalance = $invoice['total_amount'] - $newAmountPaid;
+
+        $status = $newBalance <= 0 ? 'paid' : 'pending';
+
+        $stmt = $this->pdo->prepare(
+            "UPDATE invoices SET amount_paid = ?, balance = ?, status = ? WHERE id = ?"
+        );
+        return $stmt->execute([$newAmountPaid, $newBalance, $status, $id]);
     }
 }
 ?>

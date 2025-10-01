@@ -32,6 +32,9 @@ CREATE TABLE `products` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+INSERT INTO `products` (`id`, `name`, `description`, `price`, `created_at`) VALUES
+(1, 'Standard Subscription', 'Monthly access to our services.', 100.00, '2024-07-29 04:49:02');
+
 --
 -- Table structure for table `invoices`
 --
@@ -40,6 +43,8 @@ CREATE TABLE `invoices` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
+  `amount_paid` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `balance` decimal(10,2) NOT NULL DEFAULT '0.00',
   `status` enum('pending','paid','cancelled','pending_verification','rejected') NOT NULL DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `due_date` date DEFAULT NULL,

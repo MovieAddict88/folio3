@@ -1,9 +1,9 @@
 <?php
 // Database configuration settings
-define('DB_HOST', 'YOUR_DATABASE_HOST'); // e.g., sqlXXX.infinityfree.com
-define('DB_USER', 'YOUR_DATABASE_USERNAME');
-define('DB_PASS', 'YOUR_DATABASE_PASSWORD');
-define('DB_NAME', 'YOUR_DATABASE_NAME');
+define('DB_HOST', '127.0.0.1');
+define('DB_USER', 'root');
+define('DB_PASS', 'root');
+define('DB_NAME', 'test_db');
 
 /**
  * Creates a new database connection using PDO.
