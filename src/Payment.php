@@ -19,4 +19,10 @@ class Payment {
         $stmt->execute([$invoiceId]);
         return $stmt->fetch();
     }
+
+    public function deleteByInvoiceId($invoiceId) {
+        $sql = "DELETE FROM payments WHERE invoice_id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$invoiceId]);
+    }
 }

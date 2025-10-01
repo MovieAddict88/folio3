@@ -28,9 +28,27 @@ $invoiceData = $details['invoice'];
 $items = $details['items'];
 $paymentData = null;
 
-if ($invoiceData['status'] === 'paid') {
+// Fetch payment details for paid or pending verification invoices
+if ($invoiceData['status'] === 'paid' || $invoiceData['status'] === 'pending_verification') {
     $payment = new Payment($pdo);
     $paymentData = $payment->findByInvoiceId($_GET['id']);
+}
+
+// Determine badge class for status
+$status_class = 'secondary';
+switch ($invoiceData['status']) {
+    case 'paid':
+        $status_class = 'success';
+        break;
+    case 'pending':
+        $status_class = 'warning';
+        break;
+    case 'pending_verification':
+        $status_class = 'info';
+        break;
+    case 'cancelled':
+        $status_class = 'danger';
+        break;
 }
 ?>
 <!DOCTYPE html>
@@ -66,7 +84,7 @@ if ($invoiceData['status'] === 'paid') {
                     <?php echo htmlspecialchars($invoiceData['email']); ?>
                 </div>
                 <div class="col-sm-6 text-sm-end">
-                    <strong>Status:</strong> <span class="badge bg-<?php echo $invoiceData['status'] === 'paid' ? 'success' : ($invoiceData['status'] === 'pending' ? 'warning' : 'danger'); ?>"><?php echo ucfirst(htmlspecialchars($invoiceData['status'])); ?></span><br>
+                    <strong>Status:</strong> <span class="badge bg-<?php echo $status_class; ?>"><?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($invoiceData['status']))); ?></span><br>
                     <strong>Date Created:</strong> <?php echo htmlspecialchars(date('F j, Y', strtotime($invoiceData['created_at']))); ?><br>
                     <strong>Date Due:</strong> <?php echo htmlspecialchars(date('F j, Y', strtotime($invoiceData['due_date']))); ?>
                 </div>
@@ -109,8 +127,35 @@ if ($invoiceData['status'] === 'paid') {
                     <ul class="list-unstyled">
                         <li><strong>Payment Method:</strong> <?php echo htmlspecialchars($paymentData['payment_method']); ?></li>
                         <li><strong>Transaction ID:</strong> <?php echo htmlspecialchars($paymentData['transaction_id']); ?></li>
+                        <?php if (!empty($paymentData['reference_number'])): ?>
+                            <li><strong>Reference Number:</strong> <strong class="text-primary"><?php echo htmlspecialchars($paymentData['reference_number']); ?></strong></li>
+                        <?php endif; ?>
                         <li><strong>Payment Date:</strong> <?php echo htmlspecialchars(date('F j, Y, g:i a', strtotime($paymentData['payment_date']))); ?></li>
                     </ul>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($invoiceData['status'] === 'pending_verification'): ?>
+            <hr>
+            <div class="card mt-4 bg-light border-primary">
+                <div class="card-header">
+                    <h5 class="mb-0">Admin Verification Action</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="card-text">This payment requires manual verification. Please use the reference number to confirm the payment was received.</p>
+                    <div class="d-flex justify-content-center">
+                        <form action="handle_verification.php" method="POST" class="d-inline me-2">
+                            <input type="hidden" name="invoice_id" value="<?php echo $invoiceData['id']; ?>">
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit" class="btn btn-success btn-lg">Approve Payment</button>
+                        </form>
+                        <form action="handle_verification.php" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to reject this payment? This action cannot be undone.');">
+                            <input type="hidden" name="invoice_id" value="<?php echo $invoiceData['id']; ?>">
+                            <input type="hidden" name="action" value="reject">
+                            <button type="submit" class="btn btn-danger btn-lg">Reject Payment</button>
+                        </form>
+                    </div>
                 </div>
             </div>
             <?php endif; ?>

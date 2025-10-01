@@ -47,11 +47,28 @@ $invoices = $invoice->getAllWithUsers();
             </thead>
             <tbody>
                 <?php foreach ($invoices as $inv): ?>
-                <tr>
+                <?php
+                    $status_class = 'secondary';
+                    switch ($inv['status']) {
+                        case 'paid':
+                            $status_class = 'success';
+                            break;
+                        case 'pending':
+                            $status_class = 'warning';
+                            break;
+                        case 'pending_verification':
+                            $status_class = 'info';
+                            break;
+                        case 'cancelled':
+                            $status_class = 'danger';
+                            break;
+                    }
+                ?>
+                <tr class="<?php echo $inv['status'] === 'pending_verification' ? 'table-primary' : ''; ?>">
                     <td>#<?php echo htmlspecialchars($inv['id']); ?></td>
                     <td><?php echo htmlspecialchars($inv['username']); ?></td>
                     <td>$<?php echo htmlspecialchars(number_format($inv['total_amount'], 2)); ?></td>
-                    <td><span class="badge bg-<?php echo $inv['status'] === 'paid' ? 'success' : ($inv['status'] === 'pending' ? 'warning' : 'danger'); ?>"><?php echo ucfirst(htmlspecialchars($inv['status'])); ?></span></td>
+                    <td><span class="badge bg-<?php echo $status_class; ?>"><?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($inv['status']))); ?></span></td>
                     <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($inv['created_at']))); ?></td>
                     <td><?php echo htmlspecialchars($inv['due_date']); ?></td>
                     <td>
