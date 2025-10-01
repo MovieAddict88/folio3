@@ -59,6 +59,7 @@ if (!isset($_SESSION['user_id'])) {
                     <tr>
                         <th>Invoice ID</th>
                         <th>Total Amount</th>
+                        <th>Balance</th>
                         <th>Status</th>
                         <th>Due Date</th>
                         <th>Action</th>
@@ -69,6 +70,7 @@ if (!isset($_SESSION['user_id'])) {
                     <tr>
                         <td>#<?php echo htmlspecialchars($inv['id']); ?></td>
                         <td>$<?php echo htmlspecialchars(number_format($inv['total_amount'], 2)); ?></td>
+                        <td>$<?php echo htmlspecialchars(number_format($inv['balance'], 2)); ?></td>
                         <td><span class="badge bg-<?php
                             $status = $inv['status'];
                             if ($status === 'paid') {
@@ -82,6 +84,9 @@ if (!isset($_SESSION['user_id'])) {
                         <td><?php echo htmlspecialchars($inv['due_date']); ?></td>
                         <td>
                             <a href="view_invoice.php?id=<?php echo $inv['id']; ?>" class="btn btn-sm btn-info">View Details</a>
+                            <?php if ($inv['balance'] > 0): ?>
+                                <a href="payment.php?invoice_id=<?php echo $inv['id']; ?>" class="btn btn-sm btn-success">Pay Balance</a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>
