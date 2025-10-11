@@ -1,0 +1,11 @@
+{
+  "name": "macos-iptv-portal",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "build": "npm -w client run build",
+    "start": "node server/index.js",
+    "dev": "NODE_ENV=development node server/index.js"
+  }
+}
